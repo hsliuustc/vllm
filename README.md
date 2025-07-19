@@ -100,6 +100,17 @@ Visit our [documentation](https://docs.vllm.ai/en/latest/) to learn more.
 We welcome and value any contributions and collaborations.
 Please check out [Contributing to vLLM](https://docs.vllm.ai/en/latest/contributing/index.html) for how to get involved.
 
+### Team Collaboration
+
+For teams working together on vLLM contributions, we've created a comprehensive [Team Collaboration Guide](TEAM_COLLABORATION.md) that covers:
+- DCO compliance and commit signing
+- Branch management strategies
+- Code review processes
+- PR coordination workflows
+- Common pitfalls to avoid
+
+This guide is especially useful when multiple team members are contributing to a single feature or when one person will be the final PR submitter to the main vLLM repository.
+
 ## Sponsors
 
 vLLM is a community project. Our compute resources for development and testing are supported by the following organizations. Thank you for your support!

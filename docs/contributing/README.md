@@ -369,3 +369,165 @@ review process:
 
 Finally, thank you for taking the time to read these guidelines and for your interest in contributing to vLLM.
 All of your contributions help make vLLM a great tool and community for everyone!
+
+## Team Collaboration & Advanced Workflow
+
+This section provides advanced guidelines and best practices for teams collaborating on vLLM development, especially when multiple contributors are working together and one member will be the final PR submitter to the main vLLM repository.
+
+### Commit Message Standards (Advanced)
+
+- Use descriptive, standardized commit messages for clarity and traceability.
+- Format:
+  ```
+  [Category] Brief description (#issue_number)
+
+  Detailed description if needed
+
+  Signed-off-by: Author Name <email@example.com>
+  ```
+- Categories: `[Feature]`, `[Bugfix]`, `[Core]`, `[Model]`, `[Kernel]`, `[Doc]`, `[Misc]`, `[CI]`, `[Test]`, `[Perf]`, `[Refactor]`
+- Example:
+  ```bash
+  git commit -s -m "[Feature] Add support for unquantized models" -m "This commit adds support for unquantized models in the EPLB framework."
+  ```
+
+### Branch Management Strategy
+
+- Keep your fork's main branch in sync with upstream.
+- Use feature branches for each new feature or fix.
+- For teams, use an integration branch to combine all changes before the final PR.
+- Branch naming: `feature/descriptive-name`, `bugfix/issue-description`, `team/feature-name`, `epic/major-feature`
+- Example workflow:
+  ```bash
+  git checkout main
+  git pull upstream main
+  git push origin main
+  git checkout -b feature/new-attention-mechanism
+  git checkout -b team/eplb-integration
+  git checkout feature/new-attention-mechanism
+  git rebase main
+  ```
+
+### Code Quality & Testing (Team Focus)
+
+- Run all tests: `python -m pytest tests/`
+- Format code: `black vllm/`, `isort vllm/`
+- Lint: `flake8 vllm/`, `mypy vllm/`
+- Ensure all unit and integration tests pass before PR.
+- Document performance impact and update docs as needed.
+
+### PR Process Coordination
+
+- Use clear, detailed PR descriptions and reference issues.
+- Review all team PRs thoroughly before merging.
+- For the final PR to vLLM:
+  - Include comprehensive description, test results, breaking changes, migration guide, and performance benchmarks.
+- Example PR template:
+  ```markdown
+  ## Description
+  Brief description of the changes
+
+  ## Related Issues
+  Closes #1234
+  Related to #5678
+
+  ## Type of Change
+  - [ ] Bug fix
+  - [ ] New feature
+  - [ ] Breaking change
+  - [ ] Documentation update
+
+  ## Testing
+  - [ ] Unit tests pass
+  - [ ] Integration tests pass
+  - [ ] Manual testing completed
+
+  ## Checklist
+  - [ ] Code follows style guidelines
+  - [ ] All commits are signed
+  - [ ] Documentation is updated
+  - [ ] No breaking changes (or documented)
+  ```
+
+### Code Review Checklist (Team)
+
+- [ ] Code follows vLLM style guidelines
+- [ ] All commits are properly signed
+- [ ] Tests are included and pass
+- [ ] Documentation is updated
+- [ ] No hardcoded values or secrets
+- [ ] Error handling is appropriate
+- [ ] Performance impact is considered
+- [ ] Code is readable and well-commented
+- [ ] No unnecessary dependencies added
+- [ ] All team changes are properly integrated
+- [ ] No merge conflicts
+- [ ] Commit history is clean and logical
+- [ ] All DCO requirements met
+- [ ] Follows vLLM contribution guidelines
+- [ ] All CI checks pass
+- [ ] Performance benchmarks included if applicable
+
+### Technical Considerations
+
+- Each team member should set their git identity:
+  ```bash
+  git config user.name "Your Name"
+  git config user.email "your.email@example.com"
+  git config commit.gpgsign true  # If using GPG
+  ```
+- Set up branch protection rules on your fork (require reviews, status checks, up-to-date branches, restrict force pushes).
+- Use pre-commit hooks for code quality (see earlier section for details).
+
+### Communication & Coordination
+
+- Hold regular sync-ups and use shared documentation for design decisions.
+- Use GitHub issues for task management and code review rotation.
+- Plan milestones, integration testing, and releases as a team.
+- Use daily standups, weekly reviews, sprint planning, and retrospectives for effective teamwork.
+
+### Common Pitfalls to Avoid
+
+1. Squashing team commits (don't squash commits from different authors)
+2. Missing DCO (always check for signed-off-by lines)
+3. Incomplete testing
+4. Poor commit messages
+5. Breaking changes without notice
+6. Ignoring CI failures
+7. Working on the same files simultaneously
+8. Not communicating changes
+9. Skipping code reviews
+10. Not updating documentation
+
+### Resources & Useful Commands
+
+- [CONTRIBUTING.md](https://github.com/vllm-project/vllm/blob/main/CONTRIBUTING.md)
+- [Code of Conduct](https://github.com/vllm-project/vllm/blob/main/CODE_OF_CONDUCT.md)
+- [Development Setup](https://docs.vllm.ai/en/latest/development/setup.html)
+- [API Documentation](https://docs.vllm.ai/)
+
+#### Useful Git Commands
+```bash
+# Check commit signing status
+git log --pretty=format:"%h %s%n%b%n---" -10 | grep -A 10 -B 2 "Signed-off-by"
+# Check for unsigned commits
+git log --pretty=format:"%h %s" --no-merges | while read commit; do
+    if ! git show --pretty=format:"%B" $commit | grep -q "Signed-off-by"; then
+        echo "Missing DCO: $commit"
+    fi
+done
+# Update branch with latest main
+git checkout main && git pull upstream main && git checkout your-branch && git rebase main
+# Check test coverage
+python -m pytest tests/ --cov=vllm --cov-report=html
+```
+
+### Team Roles and Responsibilities
+
+- **Final PR Submitter**: Coordinates with all team members, ensures DCO, reviews and integrates changes, submits final PR, responds to maintainer feedback.
+- **Team Members**: Follow coding standards, write tests, document changes, respond to review feedback, coordinate with others.
+- **Code Reviewers**: Review code, provide feedback, check for security issues, ensure code quality, verify test coverage.
+
+---
+
+This document merges the previous team_collaboration.md into the main contributing guide.

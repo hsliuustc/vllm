@@ -196,6 +196,125 @@ The PR needs to meet the following code quality standards:
 - Please add documentation to `docs/` if the PR modifies the user-facing behaviors of vLLM.
   It helps vLLM users understand and utilize the new features or changes.
 
+### Pre-commit Hooks and Code Quality Automation
+
+vLLM uses [pre-commit](https://pre-commit.com/) to automate code quality checks and formatting before code is committed. This helps ensure consistency and code health across all contributions.
+
+#### What is pre-commit?
+- **pre-commit** is a framework for managing and maintaining multi-language code quality hooks that run automatically every time you make a commit in git.
+- It runs a set of checks (called "hooks") on your code before the commit is finalized. These hooks can automatically fix issues (like formatting), or block the commit if there are problems (like lint errors, unsorted imports, or missing sign-offs).
+
+#### Common hooks in vLLM include:
+- **isort**: Automatically sorts Python imports.
+- **yapf**/**black**: Formats Python code.
+- **ruff**/**flake8**: Lints Python code for errors and style issues.
+- **typos**: Checks for spelling mistakes.
+- **mypy**: Checks type annotations.
+- **custom hooks**: vLLM may add project-specific checks (e.g., for license headers, filenames, etc.).
+
+#### How does it work?
+1. The `.pre-commit-config.yaml` file in the repo lists all the hooks to run.
+2. Install pre-commit with `pip install pre-commit` and set it up with `pre-commit install`.
+3. Every time you run `git commit`, pre-commit runs the hooks on your staged files.
+4. If a hook fails (e.g., isort changes your file), the commit is blocked until you fix the issues and try again.
+
+#### Why is it useful?
+- **Consistency**: Everyone’s code is formatted and checked the same way.
+- **Automation**: Catches issues before they get into the codebase.
+- **Saves time**: Reduces code review comments about style and simple mistakes.
+
+#### Example output:
+```
+isort...............................................................................................Failed
+- hook id: isort
+- files were modified by this hook
+Fixing vllm/model_executor/models/qwen3_moe.py
+```
+This means isort fixed your imports, and you need to add and commit the changes.
+
+#### How to resolve pre-commit issues (e.g., isort):
+1. **Re-run pre-commit locally** (or just run isort) to apply the changes:
+   ```bash
+   pre-commit run isort --all-files
+   # or
+   isort vllm/model_executor/models/qwen3_moe.py
+   ```
+2. **Stage the changes**:
+   ```bash
+   git add vllm/model_executor/models/qwen3_moe.py
+   ```
+3. **Amend your commit or create a new commit**:
+   ```bash
+   git commit --amend --no-edit  # if you want to keep the same commit message
+   # or
+   git commit -m "Fix import order with isort"
+   ```
+4. **Push the changes** (force push if you amended):
+   ```bash
+   git push --force-with-lease
+   ```
+
+#### Summary
+- pre-commit is a tool that helps keep your code clean and consistent by running checks automatically before every commit.
+- If a hook (like isort) fails, let it fix your code, then add and commit the changes.
+- For more details, see the [pre-commit documentation](https://pre-commit.com/).
+
+### Pre-commit Usage Guide
+
+To ensure code quality and consistency, vLLM uses pre-commit hooks. Here’s how to set up and use pre-commit in your development workflow:
+
+#### 1. Install pre-commit
+```bash
+pip install pre-commit
+```
+
+#### 2. Install the pre-commit hooks for this repository
+This sets up the hooks to run automatically on every commit:
+```bash
+pre-commit install
+```
+
+#### 3. (Optional) Install commit-msg hooks for DCO sign-off
+```bash
+pre-commit install --hook-type commit-msg
+```
+
+#### 4. Run all hooks on all files (recommended before pushing a PR)
+```bash
+pre-commit run --all-files
+```
+
+#### 5. What happens if a hook fails?
+- If a hook (like isort or yapf) fails, it may automatically fix your files. You’ll see output like:
+  ```
+  isort....................................................................Failed
+  - hook id: isort
+  - files were modified by this hook
+  Fixing vllm/model_executor/models/qwen3_moe.py
+  ```
+- **You must add and commit the changes again:**
+  ```bash
+  git add <modified-files>
+  git commit --amend --no-edit  # or create a new commit
+  ```
+- Then re-run pre-commit if needed, and push your changes.
+
+#### 6. Bypassing pre-commit (not recommended)
+If you need to bypass pre-commit for a specific commit (e.g., in emergencies):
+```bash
+git commit --no-verify
+```
+
+#### 7. Troubleshooting
+- If you see errors about missing tools, run `pip install -r requirements/lint.txt` to install all linting dependencies.
+- If you see repeated failures, carefully read the output—often, the tool will tell you what to fix or will fix it for you.
+- For more help, see the [pre-commit documentation](https://pre-commit.com/).
+
+**Summary:**
+- Always run pre-commit before pushing a PR.
+- Let pre-commit fix your code, then add and commit the changes.
+- This keeps the codebase clean and saves time for everyone!
+
 ### Adding or Changing Kernels
 
 When actively developing or modifying kernels, using the [Incremental Compilation Workflow](./incremental_build.md) is highly recommended for faster build times.
